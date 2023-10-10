@@ -147,7 +147,7 @@ fn will_erase(board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH], piece: Tetromino) -> boo
         if piece.get_y()>j {
             for i in 0..4 {
                 println!("piece {}", PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i]);
-                if  PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] != 0 && (board[piece.get_y()-j][piece.get_x()+i]==3 || board[piece.get_y()-j][piece.get_x()+i]==2){
+                if  PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] != 0 && (board[piece.get_y()-j][(piece.get_x()+i as isize) as usize]==3 || board[piece.get_y()-j][(piece.get_x()+i as isize) as usize]==2){
                     return true;
                 }
             }
@@ -161,7 +161,7 @@ fn draw_piece(piece: &mut Tetromino, board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH]){
         if piece.get_y()>=j {
             for i in 0..4 {
                 if  PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] != 0{
-                    board[piece.get_y()-j][piece.get_x()+i] = PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i];
+                    board[piece.get_y()-j][(piece.get_x()+i as isize) as usize] = PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i];
                 }
             }
         }
@@ -193,7 +193,7 @@ fn clean_old_position(board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH], piece: &mut Tetr
         if piece.get_y()>=j {
             for i in 0..4 {
                 if  PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] != 0{
-                    board[piece.get_y()-j][piece.get_x()+i] = 0;
+                    board[piece.get_y()-j][(piece.get_x()+i as isize) as usize] = 0;
                 }
             }
         }
@@ -205,7 +205,6 @@ fn move_side(board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH], side: u8, piece: &mut Tet
     println!("{}", piece.get_angle());
     if side != 0 && side !=1 { return; }
     if side==0 { //gauche
-        if piece.get_x()==0 { return; }
         if will_erase(board, Tetromino::new(piece.get_piece_index(), piece.get_x()-1, piece.get_y(), piece.get_angle())){
             return;
         }
@@ -230,7 +229,7 @@ fn down_piece(board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH], piece: &mut Tetromino) -
             if piece.get_y()>=j {
                 for i in 0..4 {
                     if PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] == 1 {
-                        board[piece.get_y()-j][piece.get_x()+i] = 3;
+                        board[piece.get_y()-j][(piece.get_x()+i as isize) as usize] = 3;
                     }
                 }
             }
@@ -243,7 +242,7 @@ fn down_piece(board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH], piece: &mut Tetromino) -
         if piece.get_y()>=j {
             for i in 0..4 {
                 if PIECES[piece.get_piece_index()][piece.get_angle()][3-j][i] == 1 {
-                    board[piece.get_y()-j][piece.get_x()+i] = 1;
+                    board[piece.get_y()-j][(piece.get_x()+i as isize) as usize] = 1;
                 }
             }
         }
@@ -293,14 +292,14 @@ fn spawn_piece(piece: usize, board: &mut [[u8; TAB_WIDTH]; TAB_HEIGH]) {
 
 struct Tetromino {
     i: usize, // Quelle pièce
-    x: usize,
+    x: isize,
     y: usize,
     a: usize, // Quel angle, entre 0 et 3
 }
 
 impl Tetromino {
     // Constructeur pour créer une nouvelle instance de Tetromino
-    pub fn new(piece_index: usize, x: usize, y: usize, angle: usize) -> Tetromino {
+    pub fn new(piece_index: usize, x: isize, y: usize, angle: usize) -> Tetromino {
         Tetromino {
             i: piece_index,
             x,
@@ -320,12 +319,12 @@ impl Tetromino {
     }
 
     // Getter pour obtenir la position x
-    pub fn get_x(&self) -> usize {
+    pub fn get_x(&self) -> isize {
         self.x
     }
 
     // Setter pour modifier la position x
-    pub fn set_x(&mut self, x: usize) {
+    pub fn set_x(&mut self, x: isize) {
         self.x = x;
     }
 
